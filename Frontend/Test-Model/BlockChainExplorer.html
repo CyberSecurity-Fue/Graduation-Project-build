@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link rel="icon" type="image/jpg" href="../image.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Explorer | CTI-Blockchain | Threat Intelligence Ledger</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2A6FFF;
+            --secondary: #00D4AA;
+            --accent: #FF6B6B;
+            --dark: #0A0F1C;
+            --darker: #050811;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gold: #FFD166;
+            --purple: #9D4EDD;
+            --neon-blue: #00F5FF;
+            --neon-green: #39FF14;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Code Pro', monospace;
+            line-height: 1.6;
+            color: var(--light);
+            background: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.03;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(42, 111, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(42, 111, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: rgba(10, 15, 28, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(42, 111, 255, 0.2);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .logo i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+            text-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-blue);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px rgba(42, 111, 255, 0.5);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(42, 111, 255, 0.5);
+        }
+
+        /* Platform Layout */
+        .platform-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(10, 15, 28, 0.9);
+            border-right: 1px solid rgba(42, 111, 255, 0.2);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(42, 111, 255, 0.1);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Blockchain Stats */
+        .blockchain-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(42, 111, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .stat-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(42, 111, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        .stat-change.negative {
+            color: var(--accent);
+        }
+
+        /* Explorer Interface */
+        .explorer-interface {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(42, 111, 255, 0.3);
+            border-radius: 8px;
+            color: var(--light);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(42, 111, 255, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .search-hint {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* Blockchain Visualization */
+        .blockchain-viz {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .viz-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .viz-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .viz-btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: var(--gray);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .viz-btn:hover, .viz-btn.active {
+            background: rgba(42, 111, 255, 0.2);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .viz-canvas {
+            width: 100%;
+            height: calc(100% - 50px);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            position: relative;
+        }
+
+        /* Blocks Container */
+        .blocks-container {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+        }
+
+        .blocks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .blocks-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .blocks-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .blocks-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .block-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .block-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .block-item.active {
+            border-color: var(--primary);
+            background: rgba(42, 111, 255, 0.1);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .block-hash {
+            font-weight: 600;
+            color: var(--light);
+            font-size: 0.9rem;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .block-number {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .block-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+        }
+
+        .block-transactions {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .tx-icon {
+            margin-right: 0.5rem;
+            color: var(--secondary);
+        }
+
+        /* Transactions Panel */
+        .transactions-panel {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+        }
+
+        .transactions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .transactions-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .transactions-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .transaction-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .transaction-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .transaction-hash {
+            font-weight: 600;
+            color: var(--light);
+            font-size: 0.9rem;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .transaction-type {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(42, 111, 255, 0.2);
+            color: var(--primary);
+        }
+
+        .transaction-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.8rem;
+        }
+
+        .transaction-data {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            padding: 0.8rem;
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            font-family: 'Source Code Pro', monospace;
+            overflow-x: auto;
+        }
+
+        /* Block Details */
+        .block-details {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .details-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .detail-group {
+            margin-bottom: 1rem;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: var(--light);
+            word-break: break-all;
+            font-family: 'Source Code Pro', monospace;
+        }
+
+        .detail-value.hash {
+            color: var(--neon-green);
+        }
+
+        /* Network Status */
+        .network-status {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+            border-radius: 20px;
+            color: var(--secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .status-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(42, 111, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(42, 111, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(42, 111, 255, 0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+            .explorer-interface {
+                grid-template-columns: 1fr;
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .platform-layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .blockchain-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    <div class="grid-bg"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                CTI-Blockchain
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="platform.html">Platform</a></li>
+                <li><a href="threat-feed.html">Threat Feed</a></li>
+                <li><a href="threat-search.html">Threat Search</a></li>
+                <li><a href="ioc-submission.html">IOC Submission</a></li>
+                <li><a href="blockchain-explorer.html" class="active">Blockchain Explorer</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <div class="user-profile">
+                    <span style="margin-right: 1rem; color: var(--gray);">Analyst_01</span>
+                </div>
+                <a href="#" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Platform Layout -->
+    <div class="platform-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="Platform.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="ThreatFeed.html"><i class="fas fa-broadcast-tower"></i> Threat Feed</a></li>
+                <li><a href="ThreatSearch.html"><i class="fas fa-search"></i> Threat Search</a></li>
+                <li><a href="IocSubmission.html"><i class="fas fa-share-alt"></i> IOC Submission</a></li>
+                <li><a href="BlockChainExplorer.html" class="active"><i class="fas fa-project-diagram"></i> Blockchain Explorer</a></li>
+                <li><a href="Analytics.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="Settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+
+            <div class="sidebar-section">
+                <h3>Explorer Views</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-cube"></i> Blocks View</a></li>
+                    <li><a href="#"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                    <li><a href="#"><i class="fas fa-network-wired"></i> Network Map</a></li>
+                    <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Recent Blocks</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-cube"></i> #12458 (2 min ago)</a></li>
+                    <li><a href="#"><i class="fas fa-cube"></i> #12457 (5 min ago)</a></li>
+                    <li><a href="#"><i class="fas fa-cube"></i> #12456 (8 min ago)</a></li>
+                    <li><a href="#"><i class="fas fa-cube"></i> #12455 (12 min ago)</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Blockchain Explorer</h1>
+                <div class="page-actions">
+                    <button class="btn btn-outline"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    <button class="btn btn-outline"><i class="fas fa-download"></i> Export Data</button>
+                </div>
+            </div>
+
+            <!-- Blockchain Stats -->
+            <div class="blockchain-stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Blocks</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">12,458</div>
+                    <div class="stat-change positive">+42 today</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Transactions</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">89,247</div>
+                    <div class="stat-change positive">+127 today</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Nodes</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">147</div>
+                    <div class="stat-change positive">+3 online</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Block Time</div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">14.2s</div>
+                    <div class="stat-change negative">+0.3s avg</div>
+                </div>
+            </div>
+
+            <!-- Network Status -->
+            <div class="network-status">
+                <div class="status-header">
+                    <h3 class="status-title">Network Status</h3>
+                    <div class="status-indicator">
+                        <div class="status-pulse"></div>
+                        Synchronized
+                    </div>
+                </div>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-value">99.8%</div>
+                        <div class="status-label">Uptime</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value">2.1s</div>
+                        <div class="status-label">Avg Response</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value">45 TPS</div>
+                        <div class="status-label">Transactions/sec</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-value">12.4 GB</div>
+                        <div class="status-label">Blockchain Size</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explorer Interface -->
+            <div class="explorer-interface">
+                <div>
+                    <!-- Search Box -->
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search by block hash, transaction hash, or address...">
+                        <div class="search-hint">Try: "0x4f8a..." or "block:12458" or "tx:latest"</div>
+                    </div>
+
+                    <!-- Blockchain Visualization -->
+                    <div class="blockchain-viz">
+                        <div class="viz-header">
+                            <h3 class="viz-title">Blockchain Visualization</h3>
+                            <div class="viz-controls">
+                                <button class="viz-btn active">Blocks</button>
+                                <button class="viz-btn">Network</button>
+                                <button class="viz-btn">Flow</button>
+                            </div>
+                        </div>
+                        <div class="viz-canvas" id="blockchainCanvas">
+                            <!-- Blockchain visualization will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Blocks Container -->
+                    <div class="blocks-container">
+                        <div class="blocks-header">
+                            <h3 class="blocks-title">Recent Blocks</h3>
+                            <div class="blocks-controls">
+                                <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">View All</button>
+                            </div>
+                        </div>
+                        <div class="blocks-list" id="blocksList">
+                            <!-- Blocks will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <!-- Transactions Panel -->
+                    <div class="transactions-panel">
+                        <div class="transactions-header">
+                            <h3 class="transactions-title">Recent Transactions</h3>
+                            <div class="blocks-controls">
+                                <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">View All</button>
+                            </div>
+                        </div>
+                        <div class="transactions-list" id="transactionsList">
+                            <!-- Transactions will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Block Details -->
+            <div class="block-details" id="blockDetails" style="display: none;">
+                <div class="details-header">
+                    <h3 class="details-title">Block Details</h3>
+                    <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" id="closeDetails">Close</button>
+                </div>
+                <div class="details-grid" id="detailsContent">
+                    <!-- Block details will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Background
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+        const charArray = chars.split("");
+        
+        const fontSize = 12;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(5, 8, 17, 0.04)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px monospace";
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+
+        // Sample Blockchain Data
+        const blockchainData = {
+            blocks: [
+                {
+                    number: 12458,
+                    hash: "0x4f8a7b2c9d1e0f3a6b5c8d7e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1",
+                    timestamp: "2025-10-07T14:02:35Z",
+                    transactionCount: 8,
+                    size: "2.1 KB",
+                    miner: "0x7426b3d4a5c8e9f1a2b3c4d5e6f7a8b9c0d1e2f3",
+                    difficulty: "15.7T",
+                    gasUsed: "4,217,893",
+                    gasLimit: "8,000,000"
+                },
+                {
+                    number: 12457,
+                    hash: "0x3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8",
+                    timestamp: "2025-10-07T14:02:21Z",
+                    transactionCount: 12,
+                    size: "3.4 KB",
+                    miner: "0x8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0",
+                    difficulty: "15.7T",
+                    gasUsed: "6,892,451",
+                    gasLimit: "8,000,000"
+                },
+                {
+                    number: 12456,
+                    hash: "0x2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3",
+                    timestamp: "2025-10-07T14:02:07Z",
+                    transactionCount: 5,
+                    size: "1.8 KB",
+                    miner: "0x5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7",
+                    difficulty: "15.7T",
+                    gasUsed: "3,124,765",
+                    gasLimit: "8,000,000"
+                },
+                {
+                    number: 12455,
+                    hash: "0x1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8",
+                    timestamp: "2025-10-07T14:01:53Z",
+                    transactionCount: 15,
+                    size: "4.2 KB",
+                    miner: "0x3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5",
+                    difficulty: "15.7T",
+                    gasUsed: "7,456,123",
+                    gasLimit: "8,000,000"
+                },
+                {
+                    number: 12454,
+                    hash: "0x0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3",
+                    timestamp: "2025-10-07T14:01:39Z",
+                    transactionCount: 7,
+                    size: "2.3 KB",
+                    miner: "0x2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4",
+                    difficulty: "15.7T",
+                    gasUsed: "4,567,890",
+                    gasLimit: "8,000,000"
+                }
+            ],
+            transactions: [
+                {
+                    hash: "0x8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1",
+                    block: 12458,
+                    type: "IOC Submission",
+                    from: "0xAnonymous_4f7x",
+                    to: "Smart Contract",
+                    timestamp: "2025-10-07T14:02:35Z",
+                    value: "0 ETH",
+                    gas: "84,521",
+                    data: {
+                        type: "IP",
+                        value: "185.22.33.45",
+                        threatLevel: "High",
+                        confidence: 95
+                    }
+                },
+                {
+                    hash: "0x7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4",
+                    block: 12458,
+                    type: "IOC Submission",
+                    from: "0xCyberSec_Corp",
+                    to: "Smart Contract",
+                    timestamp: "2025-10-07T14:02:33Z",
+                    value: "0 ETH",
+                    gas: "76,893",
+                    data: {
+                        type: "Domain",
+                        value: "malicious-domain.com",
+                        threatLevel: "Medium",
+                        confidence: 87
+                    }
+                },
+                {
+                    hash: "0x6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9",
+                    block: 12457,
+                    type: "IOC Submission",
+                    from: "0xResearch_Inst",
+                    to: "Smart Contract",
+                    timestamp: "2025-10-07T14:02:21Z",
+                    value: "0 ETH",
+                    gas: "92,456",
+                    data: {
+                        type: "Hash",
+                        value: "abc123def4567890...",
+                        threatLevel: "High",
+                        confidence: 92
+                    }
+                },
+                {
+                    hash: "0x5a8b7c0d9e2f1a4b3c6d5e8f7a2b1c4d3e6f5a8b7c0d9e2f1a4b3c6d5e8f7a2",
+                    block: 12457,
+                    type: "IOC Submission",
+                    from: "0xAnonymous_9k2z",
+                    to: "Smart Contract",
+                    timestamp: "2025-10-07T14:02:19Z",
+                    value: "0 ETH",
+                    gas: "68,234",
+                    data: {
+                        type: "URL",
+                        value: "phishing-attack.net/login",
+                        threatLevel: "Medium",
+                        confidence: 78
+                    }
+                }
+            ]
+        };
+
+        // DOM Elements
+        const blocksList = document.getElementById('blocksList');
+        const transactionsList = document.getElementById('transactionsList');
+        const blockchainCanvas = document.getElementById('blockchainCanvas');
+        const blockDetails = document.getElementById('blockDetails');
+        const detailsContent = document.getElementById('detailsContent');
+        const closeDetails = document.getElementById('closeDetails');
+
+        // Render Blocks
+        function renderBlocks() {
+            blocksList.innerHTML = '';
+            
+            blockchainData.blocks.forEach(block => {
+                const blockItem = document.createElement('div');
+                blockItem.className = 'block-item slide-in';
+                blockItem.innerHTML = `
+                    <div class="block-header">
+                        <div class="block-hash">${block.hash.substring(0, 20)}...</div>
+                        <div class="block-number">#${block.number}</div>
+                    </div>
+                    <div class="block-meta">
+                        <span>${new Date(block.timestamp).toLocaleTimeString()}</span>
+                        <span>${block.size}</span>
+                    </div>
+                    <div class="block-transactions">
+                        <i class="fas fa-exchange-alt tx-icon"></i>
+                        ${block.transactionCount} transactions
+                    </div>
+                `;
+                
+                blockItem.addEventListener('click', function() {
+                    // Remove active class from all blocks
+                    document.querySelectorAll('.block-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked block
+                    this.classList.add('active');
+                    
+                    // Show block details
+                    showBlockDetails(block);
+                });
+                
+                blocksList.appendChild(blockItem);
+            });
+        }
+
+        // Render Transactions
+        function renderTransactions() {
+            transactionsList.innerHTML = '';
+            
+            blockchainData.transactions.forEach(tx => {
+                const txItem = document.createElement('div');
+                txItem.className = 'transaction-item slide-in';
+                txItem.innerHTML = `
+                    <div class="transaction-header">
+                        <div class="transaction-hash">${tx.hash.substring(0, 20)}...</div>
+                        <div class="transaction-type">${tx.type}</div>
+                    </div>
+                    <div class="transaction-meta">
+                        <span>Block #${tx.block}</span>
+                        <span>${new Date(tx.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                    <div class="transaction-data">
+                        ${JSON.stringify(tx.data, null, 2)}
+                    </div>
+                `;
+                
+                transactionsList.appendChild(txItem);
+            });
+        }
+
+        // Show Block Details
+        function showBlockDetails(block) {
+            blockDetails.style.display = 'block';
+            
+            detailsContent.innerHTML = `
+                <div class="detail-group">
+                    <div class="detail-label">Block Number</div>
+                    <div class="detail-value">${block.number}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Block Hash</div>
+                    <div class="detail-value hash">${block.hash}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Timestamp</div>
+                    <div class="detail-value">${new Date(block.timestamp).toLocaleString()}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Transactions</div>
+                    <div class="detail-value">${block.transactionCount}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Size</div>
+                    <div class="detail-value">${block.size}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Miner</div>
+                    <div class="detail-value hash">${block.miner}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Difficulty</div>
+                    <div class="detail-value">${block.difficulty}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Gas Used</div>
+                    <div class="detail-value">${block.gasUsed}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Gas Limit</div>
+                    <div class="detail-value">${block.gasLimit}</div>
+                </div>
+            `;
+            
+            // Scroll to details
+            blockDetails.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Close Block Details
+        closeDetails.addEventListener('click', function() {
+            blockDetails.style.display = 'none';
+            document.querySelectorAll('.block-item').forEach(item => {
+                item.classList.remove('active');
+            });
+        });
+
+        // Blockchain Visualization
+        function renderBlockchainVisualization() {
+            const canvas = document.createElement('canvas');
+            canvas.width = blockchainCanvas.clientWidth;
+            canvas.height = blockchainCanvas.clientHeight;
+            blockchainCanvas.innerHTML = '';
+            blockchainCanvas.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Draw blockchain visualization
+            drawBlockchain(ctx, canvas.width, canvas.height);
+        }
+
+        function drawBlockchain(ctx, width, height) {
+            // Clear canvas
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw blockchain blocks
+            const blockCount = 8;
+            const blockWidth = 60;
+            const blockHeight = 40;
+            const spacing = 20;
+            const startX = 50;
+            const startY = height / 2 - blockHeight / 2;
+            
+            for (let i = 0; i < blockCount; i++) {
+                const x = startX + i * (blockWidth + spacing);
+                const y = startY;
+                
+                // Draw block
+                ctx.fillStyle = i === blockCount - 1 ? 'rgba(42, 111, 255, 0.3)' : 'rgba(42, 111, 255, 0.1)';
+                ctx.fillRect(x, y, blockWidth, blockHeight);
+                ctx.strokeStyle = i === blockCount - 1 ? 'rgba(42, 111, 255, 0.8)' : 'rgba(42, 111, 255, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, blockWidth, blockHeight);
+                
+                // Draw block number
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.font = '12px Source Code Pro';
+                ctx.textAlign = 'center';
+                ctx.fillText(`#${12450 + i}`, x + blockWidth / 2, y + blockHeight / 2 + 4);
+                
+                // Draw connections between blocks
+                if (i > 0) {
+                    const prevX = x - spacing;
+                    const prevY = y + blockHeight / 2;
+                    
+                    ctx.strokeStyle = 'rgba(0, 212, 170, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(prevX, prevY);
+                    ctx.lineTo(x, prevY);
+                    ctx.stroke();
+                    
+                    // Draw arrow
+                    ctx.fillStyle = 'rgba(0, 212, 170, 0.8)';
+                    ctx.beginPath();
+                    ctx.moveTo(x - 5, prevY - 3);
+                    ctx.lineTo(x, prevY);
+                    ctx.lineTo(x - 5, prevY + 3);
+                    ctx.fill();
+                }
+            }
+            
+            // Draw network nodes
+            const nodeCount = 15;
+            for (let i = 0; i < nodeCount; i++) {
+                const nodeX = Math.random() * width;
+                const nodeY = Math.random() * height;
+                const nodeSize = 4 + Math.random() * 3;
+                
+                ctx.fillStyle = 'rgba(0, 212, 170, 0.3)';
+                ctx.beginPath();
+                ctx.arc(nodeX, nodeY, nodeSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Pulsing animation for some nodes
+                if (Math.random() > 0.7) {
+                    ctx.strokeStyle = 'rgba(0, 212, 170, 0.2)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(nodeX, nodeY, nodeSize + 5, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    // Simple search implementation
+                    if (query.startsWith('0x')) {
+                        // Search by hash
+                        alert(`Searching for hash: ${query}`);
+                    } else if (query.startsWith('block:')) {
+                        // Search by block number
+                        const blockNum = query.replace('block:', '');
+                        alert(`Searching for block: ${blockNum}`);
+                    } else if (query === 'tx:latest') {
+                        // Show latest transactions
+                        alert('Showing latest transactions');
+                    } else {
+                        alert(`Searching for: ${query}`);
+                    }
+                }
+            }
+        });
+
+        // Initialize
+        renderBlocks();
+        renderTransactions();
+        renderBlockchainVisualization();
+
+        // Update visualization on resize
+        window.addEventListener('resize', renderBlockchainVisualization);
+
+        // Simulate new blocks (for demo purposes)
+        setInterval(() => {
+            // In a real application, this would fetch new data from an API
+            console.log('Checking for new blocks...');
+        }, 10000);
+    </script>
+</body>
+</html>

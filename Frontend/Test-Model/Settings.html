@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <link rel="icon" type="image/jpg" href="../image.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2A6FFF">
+    <meta name="description" content="CTI-Blockchain Platform: Settings">
+    <title>Settings | CTI-Blockchain | Platform Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2A6FFF;
+            --secondary: #00D4AA;
+            --accent: #FF6B6B;
+            --dark: #0A0F1C;
+            --darker: #050811;
+            --light: #F8FAFC;
+            --gray: #64748B;
+            --gold: #FFD166;
+            --purple: #9D4EDD;
+            --neon-blue: #00F5FF;
+            --neon-green: #39FF14;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --header-height: 70px;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Code Pro', monospace;
+            line-height: 1.6;
+            color: var(--light);
+            background: var(--dark);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.03;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(42, 111, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(42, 111, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: rgba(10, 15, 28, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(42, 111, 255, 0.2);
+            height: var(--header-height);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            height: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--light);
+            font-family: 'Montserrat', sans-serif;
+            z-index: 1001;
+        }
+
+        .logo i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+            text-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+            position: relative;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-blue);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-block;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px rgba(42, 111, 255, 0.5);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(42, 111, 255, 0.5);
+        }
+
+        /* Mobile Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--light);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* Platform Layout */
+        .platform-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(10, 15, 28, 0.9);
+            border-right: 1px solid rgba(42, 111, 255, 0.2);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: calc(100vh - var(--header-height));
+            overflow-y: auto;
+            transition: var(--transition);
+            z-index: 999;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(42, 111, 255, 0.1);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-section {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Mobile Sidebar Toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(42, 111, 255, 0.4);
+            z-index: 1000;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(42, 111, 255, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Settings Layout */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+        }
+
+        .settings-nav {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .settings-nav-list {
+            list-style: none;
+        }
+
+        .settings-nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .settings-nav-link:hover, .settings-nav-link.active {
+            background: rgba(42, 111, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .settings-nav-link i {
+            margin-right: 0.8rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .settings-content {
+            background: rgba(10, 15, 28, 0.7);
+            border-radius: 10px;
+            border: 1px solid rgba(42, 111, 255, 0.2);
+            padding: 2rem;
+        }
+
+        .settings-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(42, 111, 255, 0.3);
+            border-radius: 4px;
+            color: var(--light);
+            font-family: 'Source Code Pro', monospace;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(42, 111, 255, 0.3);
+        }
+
+        .form-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 0.3rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-check-input {
+            margin-right: 0.8rem;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .form-check-label {
+            color: var(--light);
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* API Keys */
+        .api-keys-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .api-key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .api-key-info {
+            flex: 1;
+        }
+
+        .api-key-name {
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 0.3rem;
+        }
+
+        .api-key-value {
+            font-family: 'Source Code Pro', monospace;
+            color: var(--gray);
+            font-size: 0.8rem;
+            word-break: break-all;
+        }
+
+        .api-key-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Connected Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(42, 111, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary);
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-connected {
+            background: var(--secondary);
+        }
+
+        .status-disconnected {
+            background: var(--accent);
+        }
+
+        .service-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .danger-title {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .danger-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(42, 111, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(42, 111, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(42, 111, 255, 0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                max-width: 720px;
+            }
+            
+            .sidebar {
+                width: 220px;
+            }
+            
+            .main-content {
+                margin-left: 220px;
+            }
+            
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 540px;
+            }
+            
+            .platform-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                width: 280px;
+                z-index: 998;
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .page-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background: var(--darker);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+                z-index: 1000;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-links li {
+                margin: 1.5rem 0;
+            }
+            
+            .auth-buttons {
+                display: none;
+            }
+            
+            .mobile-auth {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 2rem;
+                width: 100%;
+                padding: 0 2rem;
+            }
+            
+            .mobile-auth .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .main-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.7rem;
+            }
+            
+            .settings-content {
+                padding: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .api-key-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .api-key-actions {
+                margin-top: 0.8rem;
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+
+        /* App-like features */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .platform-layout {
+                padding-top: 70px;
+            }
+        }
+
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrolling for iOS */
+        .container, section, .main-content {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Mobile Auth Buttons */
+        .mobile-auth {
+            display: none;
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 997;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    <div class="grid-bg"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                CTI-Blockchain
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="platform.html">Platform</a></li>
+                <li><a href="threat-feed.html">Threat Feed</a></li>
+                <li><a href="threat-search.html">Threat Search</a></li>
+                <li><a href="ioc-submission.html">IoC Submission</a></li>
+                <li><a href="blockchain-explorer.html">Blockchain Explorer</a></li>
+                <div class="mobile-auth">
+                    <div class="user-profile">
+                        <span>Analyst_01</span>
+                    </div>
+                    <a href="#" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                </div>
+            </ul>
+            <div class="auth-buttons">
+                <div class="user-profile">
+                    <span style="margin-right: 1rem; color: var(--gray);">Analyst_01</span>
+                </div>
+                <a href="#" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+            </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Platform Layout -->
+    <div class="platform-layout">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="Platform.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="ThreatFeed.html"><i class="fas fa-broadcast-tower"></i> Threat Feed</a></li>
+                <li><a href="ThreatSearch.html"><i class="fas fa-search"></i> Threat Search</a></li>
+                <li><a href="IocSubmission.html"><i class="fas fa-share-alt"></i> IoC Submission</a></li>
+                <li><a href="BlockChainExplorer.html"><i class="fas fa-project-diagram"></i> Blockchain Explorer</a></li>
+                <li><a href="Analytics.html"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="Settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+
+            <div class="sidebar-section">
+                <h3>My Organizations</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-building"></i> CyberSec Corp</a></li>
+                    <li><a href="#"><i class="fas fa-building"></i> Research Institute</a></li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-plus-circle"></i> New Submission</a></li>
+                    <li><a href="#"><i class="fas fa-download"></i> Export Data</a></li>
+                    <li><a href="#"><i class="fas fa-bell"></i> Alerts</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Settings</h1>
+                <div class="page-actions">
+                    <button class="btn btn-outline" id="exportSettingsBtn"><i class="fas fa-download"></i> Export Settings</button>
+                    <button class="btn btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+
+            <div class="settings-layout">
+                <!-- Settings Navigation -->
+                <div class="settings-nav">
+                    <ul class="settings-nav-list">
+                        <li class="settings-nav-item">
+                            <a href="#profile" class="settings-nav-link active" data-section="profile">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#notifications" class="settings-nav-link" data-section="notifications">
+                                <i class="fas fa-bell"></i> Notifications
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#security" class="settings-nav-link" data-section="security">
+                                <i class="fas fa-shield-alt"></i> Security
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#api" class="settings-nav-link" data-section="api">
+                                <i class="fas fa-key"></i> API Keys
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#integrations" class="settings-nav-link" data-section="integrations">
+                                <i class="fas fa-plug"></i> Integrations
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#preferences" class="settings-nav-link" data-section="preferences">
+                                <i class="fas fa-sliders-h"></i> Preferences
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#danger" class="settings-nav-link" data-section="danger">
+                                <i class="fas fa-exclamation-triangle"></i> Danger Zone
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="settings-content">
+                    <!-- Profile Section -->
+                    <div class="settings-section" id="profile-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Profile Settings</h2>
+                            <p class="section-description">Manage your account profile and personal information</p>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="firstName">First Name</label>
+                                <input type="text" class="form-control" id="firstName" value="Alex">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="lastName">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" value="Johnson">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" class="form-control" id="email" value="alex.johnson@cybersec.com">
+                            <div class="form-text">Your email address is used for account notifications and login</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="organization">Organization</label>
+                            <select class="form-control" id="organization">
+                                <option value="cybersec-corp">CyberSec Corp</option>
+                                <option value="research-institute">Research Institute</option>
+                                <option value="independent">Independent Researcher</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="role">Role</label>
+                            <input type="text" class="form-control" id="role" value="Security Analyst">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="bio">Bio</label>
+                            <textarea class="form-control" id="bio" rows="4">Senior security analyst with 8+ years of experience in threat intelligence and incident response.</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div class="settings-section" id="notifications-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">Notification Preferences</h2>
+                            <p class="section-description">Control how and when you receive notifications</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="emailNotifications" checked>
+                                <label class="form-check-label" for="emailNotifications">Email Notifications</label>
+                            </div>
+                            <div class="form-text">Receive notifications via email</div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="pushNotifications" checked>
+                                <label class="form-check-label" for="pushNotifications">Push Notifications</label>
+                            </div>
+                            <div class="form-text">Receive browser push notifications</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Notification Types</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="newThreats" checked>
+                                <label class="form-check-label" for="newThreats">New threats matching my watchlist</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="highSeverity" checked>
+                                <label class="form-check-label" for="highSeverity">High severity threats</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="systemUpdates">
+                                <label class="form-check-label" for="systemUpdates">System updates and maintenance</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="communityActivity">
+                                <label class="form-check-label" for="communityActivity">Community activity and discussions</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="notificationFrequency">Notification Frequency</label>
+                            <select class="form-control" id="notificationFrequency">
+                                <option value="immediate">Immediately</option>
+                                <option value="hourly">Hourly Digest</option>
+                                <option value="daily" selected>Daily Digest</option>
+                                <option value="weekly">Weekly Summary</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Security Section -->
+                    <div class="settings-section" id="security-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">Security Settings</h2>
+                            <p class="section-description">Manage your account security and authentication</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="currentPassword">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="newPassword">New Password</label>
+                            <input type="password" class="form-control" id="newPassword">
+                            <div class="form-text">Password must be at least 12 characters with uppercase, lowercase, numbers, and symbols</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="twoFactorAuth" checked>
+                                <label class="form-check-label" for="twoFactorAuth">Enable Two-Factor Authentication</label>
+                            </div>
+                            <div class="form-text">Add an extra layer of security to your account</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Active Sessions</label>
+                            <div class="api-key-item">
+                                <div class="api-key-info">
+                                    <div class="api-key-name">Chrome on Windows • New York, US</div>
+                                    <div class="api-key-value">Last active: 2 hours ago</div>
+                                </div>
+                                <div class="api-key-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Revoke</button>
+                                </div>
+                            </div>
+                            <div class="api-key-item">
+                                <div class="api-key-info">
+                                    <div class="api-key-name">Firefox on macOS • London, UK</div>
+                                    <div class="api-key-value">Last active: 3 days ago</div>
+                                </div>
+                                <div class="api-key-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Revoke</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Keys Section -->
+                    <div class="settings-section" id="api-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">API Keys</h2>
+                            <p class="section-description">Manage your API keys for programmatic access</p>
+                        </div>
+
+                        <div class="api-keys-list">
+                            <div class="api-key-item">
+                                <div class="api-key-info">
+                                    <div class="api-key-name">Production API Key</div>
+                                    <div class="api-key-value">cti_sk_live_abc123def456ghi789jkl012mno345pqr678</div>
+                                </div>
+                                <div class="api-key-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Regenerate</button>
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Revoke</button>
+                                </div>
+                            </div>
+                            <div class="api-key-item">
+                                <div class="api-key-info">
+                                    <div class="api-key-name">Development API Key</div>
+                                    <div class="api-key-value">cti_sk_test_xyz987uvw654rst321qpo098nml765</div>
+                                </div>
+                                <div class="api-key-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Regenerate</button>
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Revoke</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" id="createApiKeyBtn">
+                            <i class="fas fa-plus"></i> Create New API Key
+                        </button>
+                    </div>
+
+                    <!-- Integrations Section -->
+                    <div class="settings-section" id="integrations-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">Integrations</h2>
+                            <p class="section-description">Connect with other security tools and platforms</p>
+                        </div>
+
+                        <div class="services-grid">
+                            <div class="service-card">
+                                <div class="service-header">
+                                    <div class="service-icon">
+                                        <i class="fab fa-slack"></i>
+                                    </div>
+                                    <div class="service-name">Slack</div>
+                                </div>
+                                <div class="service-status">
+                                    <div class="status-indicator status-connected"></div>
+                                    <span>Connected</span>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Configure</button>
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <div class="service-card">
+                                <div class="service-header">
+                                    <div class="service-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="service-name">Email</div>
+                                </div>
+                                <div class="service-status">
+                                    <div class="status-indicator status-connected"></div>
+                                    <span>Connected</span>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Configure</button>
+                                    <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Disconnect</button>
+                                </div>
+                            </div>
+
+                            <div class="service-card">
+                                <div class="service-header">
+                                    <div class="service-icon">
+                                        <i class="fab fa-microsoft"></i>
+                                    </div>
+                                    <div class="service-name">Microsoft Defender</div>
+                                </div>
+                                <div class="service-status">
+                                    <div class="status-indicator status-disconnected"></div>
+                                    <span>Not Connected</span>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Connect</button>
+                                </div>
+                            </div>
+
+                            <div class="service-card">
+                                <div class="service-header">
+                                    <div class="service-icon">
+                                        <i class="fas fa-network-wired"></i>
+                                    </div>
+                                    <div class="service-name">Splunk</div>
+                                </div>
+                                <div class="service-status">
+                                    <div class="status-indicator status-disconnected"></div>
+                                    <span>Not Connected</span>
+                                </div>
+                                <div class="service-actions">
+                                    <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;">Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Section -->
+                    <div class="settings-section" id="preferences-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">Platform Preferences</h2>
+                            <p class="section-description">Customize your platform experience</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="timezone">Timezone</label>
+                            <select class="form-control" id="timezone">
+                                <option value="utc">UTC</option>
+                                <option value="est" selected>Eastern Time (ET)</option>
+                                <option value="cst">Central Time (CT)</option>
+                                <option value="pst">Pacific Time (PT)</option>
+                                <option value="gmt">Greenwich Mean Time (GMT)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="dateFormat">Date Format</label>
+                            <select class="form-control" id="dateFormat">
+                                <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                                <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                                <option value="yyyy-mm-dd" selected>YYYY-MM-DD</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="itemsPerPage">Items Per Page</label>
+                            <select class="form-control" id="itemsPerPage">
+                                <option value="10">10 items</option>
+                                <option value="25" selected>25 items</option>
+                                <option value="50">50 items</option>
+                                <option value="100">100 items</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="theme">Theme</label>
+                            <select class="form-control" id="theme">
+                                <option value="dark" selected>Dark</option>
+                                <option value="light">Light</option>
+                                <option value="auto">Auto (System)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="autoRefresh" checked>
+                                <label class="form-check-label" for="autoRefresh">Auto-refresh threat feed</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="showThumbnails">
+                                <label class="form-check-label" for="showThumbnails">Show threat visualization thumbnails</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="compactView">
+                                <label class="form-check-label" for="compactView">Use compact view for threat lists</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone Section -->
+                    <div class="settings-section" id="danger-section" style="display: none;">
+                        <div class="section-header">
+                            <h2 class="section-title">Danger Zone</h2>
+                            <p class="section-description">Irreversible and destructive actions</p>
+                        </div>
+
+                        <div class="danger-zone">
+                            <h3 class="danger-title">Delete Account</h3>
+                            <p class="danger-description">Once you delete your account, there is no going back. All your data, submissions, and settings will be permanently removed.</p>
+                            <button class="btn btn-outline" style="border-color: var(--accent); color: var(--accent);">
+                                <i class="fas fa-trash-alt"></i> Delete My Account
+                            </button>
+                        </div>
+
+                        <div class="danger-zone" style="margin-top: 1.5rem;">
+                            <h3 class="danger-title">Export All Data</h3>
+                            <p class="danger-description">Download a complete archive of all your data, including threat submissions, watchlists, and settings.</p>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-download"></i> Export All Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <button class="btn btn-outline" id="resetSettingsBtn">Reset to Defaults</button>
+                        <button class="btn btn-primary" id="applySettingsBtn">Apply Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <script>
+        // Matrix Background
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        resizeCanvas();
+        
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+        const charArray = chars.split("");
+        
+        let fontSize = 12;
+        let columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(5, 8, 17, 0.04)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px monospace";
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+                drops[i]++;
+            }
+        }
+        
+        let matrixInterval = setInterval(drawMatrix, 35);
+        
+        // Adjust matrix for mobile performance
+        function adjustMatrixForScreen() {
+            clearInterval(matrixInterval);
+            
+            if (window.innerWidth < 768) {
+                fontSize = 10;
+                columns = canvas.width / fontSize;
+                
+                // Reset drops array
+                drops.length = 0;
+                for(let i = 0; i < columns; i++) {
+                    drops[i] = 1;
+                }
+                
+                matrixInterval = setInterval(drawMatrix, 50); // Slower on mobile
+            } else {
+                fontSize = 12;
+                columns = canvas.width / fontSize;
+                
+                // Reset drops array
+                drops.length = 0;
+                for(let i = 0; i < columns; i++) {
+                    drops[i] = 1;
+                }
+                
+                matrixInterval = setInterval(drawMatrix, 35);
+            }
+        }
+        
+        // Mobile Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (navLinks.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Sidebar Toggle for Mobile
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            
+            if (sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+        
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+        
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a, .sidebar-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        // Settings Navigation
+        const settingsNavLinks = document.querySelectorAll('.settings-nav-link');
+        const settingsSections = document.querySelectorAll('.settings-section');
+        
+        settingsNavLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                settingsNavLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Hide all sections
+                settingsSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Show the selected section
+                const sectionId = this.getAttribute('data-section') + '-section';
+                document.getElementById(sectionId).style.display = 'block';
+            });
+        });
+        
+        // Form Actions
+        document.getElementById('saveSettingsBtn').addEventListener('click', function() {
+            // In a real app, this would save settings to the backend
+            alert('Settings saved successfully!');
+        });
+        
+        document.getElementById('applySettingsBtn').addEventListener('click', function() {
+            // In a real app, this would save and apply settings
+            alert('Settings applied successfully!');
+        });
+        
+        document.getElementById('resetSettingsBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all settings to their defaults?')) {
+                // In a real app, this would reset settings
+                alert('Settings have been reset to defaults.');
+            }
+        });
+        
+        document.getElementById('exportSettingsBtn').addEventListener('click', function() {
+            // In a real app, this would export settings
+            alert('Settings exported successfully!');
+        });
+        
+        document.getElementById('createApiKeyBtn').addEventListener('click', function() {
+            // In a real app, this would create a new API key
+            alert('New API key created!');
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            adjustMatrixForScreen();
+            
+            // Close mobile menu if open when resizing to larger screen
+            if (window.innerWidth > 768) {
+                if (navLinks.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navLinks.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+                
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+        
+        // Initialize for current screen size
+        adjustMatrixForScreen();
+        
+        // Add touch-friendly improvements
+        document.querySelectorAll('.btn, .nav-links a, .sidebar-menu a, .settings-nav-link').forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.98)';
+            });
+            
+            element.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
